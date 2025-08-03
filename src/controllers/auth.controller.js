@@ -1,6 +1,7 @@
 const user = require('../models/user.model');
 const userModel = require('../models/user.model');
 const jwt = require('jsonwebtoken');
+const bcrypt = require("bcryptjs");
 
 async function registerController(req, res) {
     const { username, password } = req.body;
@@ -10,7 +11,10 @@ async function registerController(req, res) {
     if (isuser) {
         return res.status(400).json({ message: 'User already exists' });
     }
-    const newuser = await userModel.create({ username, password });
+    const newuser = await userModel.create({ 
+        username,
+        password: await bcrypt.hash(password,10) 
+    });
    
     const token = jwt.sign({ id: newuser._id }, process.env.JWT_SECRET)
 
@@ -34,7 +38,8 @@ async function loginController(req, res) {
         return res.status(400).json({ message: 'User not found' });
     }
       
-    const isPasswordValid = user.password === password; // In a real application, use bcrypt to hash and compare passwords
+    const isPasswordValid = bcrypt.compare(password,user.password ); // In a real application, use bcrypt to hash and compare passwords
+    
     if (!isPasswordValid) {
         return res.status(400).json({ message: 'Invalid password' });
     }
