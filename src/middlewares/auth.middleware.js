@@ -21,17 +21,16 @@ async function authmiddleware(req, res, next) {
         if (!user) {
             return res.status(401).json({
                 message: "User not found"
-            })
-           
+            })           
         }
 
         req.user = user;
         
-        // Add your post creation logic here
-        res.status(200).json({
-            message: "Post route working",
-            user: user
-        });
+        // // Add your post creation logic here
+        // res.status(200).json({
+        //     message: "Post route working",
+        //     user: user
+        // });
         next()
     }
     catch (err) {
